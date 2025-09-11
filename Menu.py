@@ -16,7 +16,7 @@ class Menu:
                 print("3 - Mostrar Saldo")
                 print("4 - Mostrar Histórico")
                 print("5 - Remover Transação")
-                print("6 - Simular Poupança Futura")
+                print("6 - Simulador de Investimento")
                 print("7 - Sair")
                 opcao = input("Escolha uma opção: ").strip()
 
@@ -31,7 +31,7 @@ class Menu:
                 elif opcao == "5":
                     self.remover_transacao()
                 elif opcao == "6":
-                    self.simular_poupanca()
+                    self.simular_investimento()
                 elif opcao == "7":
                     confirmar = input(
                         "Tem certeza que deseja sair? (s/n): ").strip().lower()
@@ -114,34 +114,39 @@ class Menu:
         except Exception as e:
             print(f"Ocorreu um erro inesperado: {e}")
 
-    def simular_poupanca(self):
+    def simular_investimento(self):
         try:
-            print(f"Seu saldo atual é: R$ {self.sistema.calcular_saldo():.2f}")
-
-            meses_str = input(
-                "Digite o número de meses para simulação: ").strip()
-            if not meses_str.isdigit() or int(meses_str) <= 0:
+            saldo_atual = self.sistema.calcular_saldo()
+            if saldo_atual <= 0:
                 raise ValueError(
-                    "O número de meses deve ser um inteiro positivo.")
+                    "Não há saldo disponível para simulação. "
+                    "Adicione uma receita antes de simular o investimento."
+                )
+
+            print(f"Seu saldo atual é: R$ {saldo_atual:.2f}")
+
+            meses_str = input("Digite o número de meses para simulação: ").strip()
+            if not meses_str.isdigit() or int(meses_str) <= 0:
+                raise ValueError("O número de meses deve ser um inteiro positivo.")
             meses = int(meses_str)
 
             taxa_str = input(
-                "Digite a taxa de rendimento mensal (%), ou deixe vazio (0%): ").strip().replace(',', '.')
+                "Digite a taxa de rendimento mensal (%), ou deixe vazio (0%): "
+            ).strip().replace(',', '.')
             taxa = float(taxa_str) if taxa_str else 0.0
             if taxa < 0:
                 raise ValueError("A taxa de rendimento não pode ser negativa.")
 
             aporte_str = input(
-                "Digite o valor do aporte mensal (deixe vazio se não houver): ").strip().replace(',', '.')
+                "Digite o valor do aporte mensal (deixe vazio se não houver): "
+            ).strip().replace(',', '.')
             aporte_mensal = float(aporte_str) if aporte_str else 0.0
             if aporte_mensal < 0:
                 raise ValueError("O aporte mensal não pode ser negativo.")
 
-            # Chama o método atualizado com o novo parâmetro
-            resultados = self.sistema.simular_poupanca(
-                meses, taxa, aporte_mensal)
+            resultados = self.sistema.simular_investimento(meses, taxa, aporte_mensal)
 
-            print("\n===== RESULTADO DA SIMULAÇÃO DE POUPANÇA =====")
+            print("\n===== RESULTADO DA SIMULAÇÃO DE INVESTIMENTO =====")
             for mes, saldo in resultados:
                 print(f"Final do Mês {mes}: R$ {saldo:.2f}")
 
